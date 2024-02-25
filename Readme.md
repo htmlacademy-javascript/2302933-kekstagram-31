@@ -1,7 +1,7 @@
 # Личный проект «Кекстаграм»
 
 * Студент: [Petr Melnikov](https://up.htmlacademy.ru/javascript/31/user/2302933).
-* Наставник: `Неизвестно`.
+* Наставник: [Олег Глущенко](https://htmlacademy.ru/profile/id305355).
 
 ---
 
