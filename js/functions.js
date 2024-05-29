@@ -24,3 +24,16 @@ const returnNumberFromString = (string) => {
   }
   return parseInt(number, 10);
 };
+
+// Воспомогательная функция для пятой домашки
+const convertTimeIntoMinutes = (string) => {
+  const time = string.split(':');
+  return +time[0] * 60 + +time[1];
+};
+
+const isMeetingAvailable = (jobStart, jobFinish, meetingStart, durationOfMeeting) => {
+  jobStart = convertTimeIntoMinutes(jobStart);
+  jobFinish = convertTimeIntoMinutes(jobFinish);
+  meetingStart = convertTimeIntoMinutes(meetingStart);
+  return meetingStart >= jobStart && meetingStart < jobFinish && (jobFinish - meetingStart) >= durationOfMeeting;
+};
