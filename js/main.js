@@ -1,3 +1,4 @@
-import {similarPhotoDescriptions} from './createData';
+import {createPhotoDescriptions} from './createData.js';
+import './thumbnails.js';
 
-console.log(similarPhotoDescriptions);
+console.log(createPhotoDescriptions());
