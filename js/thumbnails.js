@@ -1,4 +1,4 @@
-import {photos} from './createData';
+import {photos} from './create-data';
 
 const userPictureTemplate = document.querySelector('#picture').content.querySelector('.picture');
 const picturesList = document.querySelector('.pictures');
