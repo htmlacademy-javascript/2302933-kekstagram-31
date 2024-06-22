@@ -1,4 +1,6 @@
 import {isEscapeKey} from './util';
+import {isDescriptionValid, isHashtagValid, error} from './validate-form';
+import {onEffectButtonClick, resetFilter} from './slider-editor';
 
 const imageUploadForm = document.querySelector('.img-upload__form');
 const imageUploadFormOverlay = imageUploadForm.querySelector('.img-upload__overlay');
@@ -6,10 +8,30 @@ const imageUploadFormClose = imageUploadForm.querySelector('.img-upload__cancel'
 const fileUpload = imageUploadForm.querySelector('.img-upload__input');
 const hashtagInput = imageUploadForm.querySelector('.text__hashtags');
 const descriptionInput = imageUploadForm.querySelector('.text__description');
+const imageIncreaseButton = imageUploadForm.querySelector('.scale__control--bigger');
+const imageDecreaseButton = imageUploadForm.querySelector('.scale__control--smaller');
+const imageScaleControl = imageUploadForm.querySelector('.scale__control--value');
+const image = imageUploadForm.querySelector('.img-upload__preview img');
+const effectsRadioButtonList = imageUploadForm.querySelector('.effects__list');
 
-const MAX_HASHTAGS = 5;
-const MAX_SYMBOLS = 20;
-const MAX_DESCRIPTION_LENGTH = 140;
+let scale = 1;
+const SCALE_STEP = 0.25;
+
+imageIncreaseButton.addEventListener('click', () => {
+  if (scale < 1) {
+    scale += SCALE_STEP;
+    image.style.transform = `scale(${scale})`;
+    imageScaleControl.value = `${scale * 100}%`;
+  }
+});
+
+imageDecreaseButton.addEventListener('click', () => {
+  if (scale > SCALE_STEP) {
+    scale -= SCALE_STEP;
+    image.style.transform = `scale(${scale})`;
+    imageScaleControl.value = `${scale * 100}%`;
+  }
+});
 
 const onFormOverlayCloseClick = () => {
   // eslint-disable-next-line no-use-before-define
@@ -29,6 +51,7 @@ imageUploadForm.addEventListener('change', () => {
   document.body.classList.add('modal-open');
   imageUploadFormClose.addEventListener('click', onFormOverlayCloseClick);
   document.addEventListener('keydown', onEscKeydown);
+  effectsRadioButtonList.addEventListener('click', onEffectButtonClick);
 });
 
 const closeFormOverlay = () => {
@@ -36,6 +59,7 @@ const closeFormOverlay = () => {
   document.body.classList.remove('modal-open');
   imageUploadFormClose.removeEventListener('click', onFormOverlayCloseClick);
   document.removeEventListener('keydown', onEscKeydown);
+  resetFilter();
   fileUpload.value = '';
 };
 
@@ -44,70 +68,6 @@ const pristine = new Pristine(imageUploadForm, {
   errorTextParent: 'img-upload__field-wrapper',
   errorTextClass: 'img-upload__field-wrapper--error'
 });
-
-let errorMessage = '';
-
-const error = () => errorMessage;
-
-const isHashtagValid = (value) => {
-  errorMessage = '';
-  const inputText = value.toLowerCase().trim();
-
-  if (inputText.length === 0) {
-    return true;
-  }
-
-  const inputArray = inputText.split(/\s+/);
-
-  const hashtagRules = [
-    {
-      check: inputArray.some((item) => item === '#'),
-      errorMessage: 'Хештег не может состоять только из одной решётки'
-    },
-    {
-      check: inputArray.some((item) => item[0] !== '#'),
-      errorMessage: 'Хештег должен начинаться с символа \'#\''
-    },
-    {
-      check: inputArray.some((item) => item.slice(1).includes('#')),
-      errorMessage: 'Хештеги должны разделяться пробелами'
-    },
-    {
-      check: inputArray.some((item , num, array) => array.includes(item, num + 1)),
-      errorMessage: 'Хештеги не должны повторяться'
-    },
-    {
-      check: inputArray.length > MAX_HASHTAGS,
-      errorMessage: `Нельзя указать больше ${MAX_HASHTAGS} хештегов`
-    },
-    {
-      check: inputArray.some((item) => item.length > MAX_SYMBOLS),
-      errorMessage: 'Хештег не может быть больше 20 символов, включая решётку'
-    },
-    {
-      check: inputArray.some((item) => !/^#[a-zа-яё0-9]{1,19}$/i.test(item)),
-      errorMessage: 'Хештег содержит недопустимые символы'
-    }
-  ];
-
-  return hashtagRules.every((rule) => {
-    const isInvalid = rule.check;
-    if (isInvalid) {
-      errorMessage = rule.errorMessage;
-    }
-
-    return !isInvalid;
-  });
-};
-
-const isDescriptionValid = (value) => {
-  errorMessage = '';
-  if (value.length > 140) {
-    errorMessage = `Комментарий не может привышать ${MAX_DESCRIPTION_LENGTH} символов`;
-    return false;
-  }
-  return true;
-};
 
 const onHashtagInputChange = () => {
   isHashtagValid(hashtagInput.value);
@@ -127,6 +87,7 @@ const onFormSubmit = (evt) => {
 };
 
 pristine.addValidator(hashtagInput, isHashtagValid, error, 2, false);
+
 pristine.addValidator(descriptionInput, isDescriptionValid, error, 2, false);
 
 hashtagInput.addEventListener('input', onHashtagInputChange);
