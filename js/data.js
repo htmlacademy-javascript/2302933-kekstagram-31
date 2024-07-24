@@ -82,4 +82,6 @@ const StyleFilterByEffects = {
   marvin: getMarvinStyleFilter,
 };
 
-export {NAMES, MESSAGES, Effects, StyleFilterByEffects};
+const TIMEOUT_DELAY = 500;
+
+export {NAMES, MESSAGES, Effects, StyleFilterByEffects, TIMEOUT_DELAY};

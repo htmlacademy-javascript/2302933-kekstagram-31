@@ -18,6 +18,7 @@ const resetFilter = () => {
   image.style.removeProperty('filter');
   effectSliderContainer.classList.add('hidden');
   image.classList.replace(imageSelector, 'effect__preview--none');
+  imageUploadWrapper.querySelector('#effect-none').checked = true;
 };
 
 const onEffectButtonClick = (evt) => {

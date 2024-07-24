@@ -1,4 +1,3 @@
-import {photos} from './create-data';
 import {isEscapeKey} from './util.js';
 import {renderComments, clearComments} from './render-comments';
 
@@ -36,7 +35,7 @@ const openBigPicture = () => {
   bigPictureClose.addEventListener('click', onBigPictureCancelClick);
 };
 
-const fillBigPicturePopup = (photoId) => {
+const fillBigPicturePopup = (photos, photoId) => {
   const currentPicture = photos.find((photo) => photo.id === Number(photoId));
 
   bigPictureContainer.querySelector('img').src = currentPicture.url;
